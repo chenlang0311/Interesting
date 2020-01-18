@@ -164,32 +164,35 @@ const zhuboLv={
     lv95:175545000,
     lv100:235545000
 } 
-let accountNum = 100;
+let accountNum = 200;
 const FIRST_DAY_MONEY = 50;
-let firstDayExp = FIRST_DAY_MONEY*accountNum*10;
+let zhuboExp = FIRST_DAY_MONEY*accountNum*10;
+let myAllExp = FIRST_DAY_MONEY*10;
+let isSuperFens = true;
 let firstDayLv = 5;
 let currentDay = 1;
 let myLv = firstDayLv;
-console.log(firstDayExp)
+let tagetNeedExp =0;
+let tagetLv = 30;
+// console.log(firstDayExp)
 function checkZhuboDay(lv){
-    let tagetNeedExp = zhuboLv[`lv${lv}`];
-    console.log("tagetNeedExp",tagetNeedExp)
-    if(tagetNeedExp<firstDayExp)return '1';
+    tagetNeedExp = zhuboLv[`lv${lv}`]; //升到主播等级需要的经验
+    // console.log("tagetNeedExp",tagetNeedExp)
+    if(tagetNeedExp<zhuboExp)return currentDay;
     // TODO 递归算出来需要多少天
-    for(let i = firstDayLv;i<allFensLv.length;i++){
-        let myExp = allFensLv[myLv].exp;
-        let myDailyFree = allFensLv[myLv].dailyFree;
-        let nextLv = allFensLv[i].lv;
-        let nextExp = allFensLv[i].exp;
-        let nextDayFree = allFensLv[i].dailyFree;
-        console.log('currentLv',nextLv,nextExp,nextDayFree)
-        // if( nextLv == myLv){
-        //   console.log('currentLv',nextLv,nextExp,nextDayFree)
-        // }
-    }
+        while(zhuboExp<tagetNeedExp){
+                let myDailyFree = allFensLv[myLv].dailyFree*(isSuperFens?1.5:1);
+                currentDay = currentDay +1;
+                myAllExp = myAllExp + myDailyFree;
+                if(myAllExp>allFensLv[myLv].exp&&myLv<29)myLv++;
+                zhuboExp = zhuboExp+(myDailyFree*accountNum)
+        }
+        //console.log('currentLv',allFensLv[myLv].lv,currentDay,myAllExp,zhuboExp)
+        return currentDay;
 }
-function checkDay (){
-    
+let needDay = checkZhuboDay(tagetLv)
+if(isSuperFens){
+    console.log(`超级粉丝团，总结,主播等级升到${tagetLv}级，如果有${accountNum}个账号,第一天每个账号投资${FIRST_DAY_MONEY+6}元(一共投资${accountNum*(FIRST_DAY_MONEY+6)}元),花费${needDay}天可以完成！粉丝牌等级为${allFensLv[myLv].lv}级`)
+}else{
+    console.log(`非超级粉丝团，总结,主播等级升到${tagetLv}级，如果有${accountNum}个账号,第一天每个账号投资${FIRST_DAY_MONEY}元(一共投资${accountNum*FIRST_DAY_MONEY}元),花费${needDay}天可以完成！粉丝牌等级为${allFensLv[myLv].lv}级`)
 }
-let needDay = checkZhuboDay(20)
-console.log('needDay',needDay)
